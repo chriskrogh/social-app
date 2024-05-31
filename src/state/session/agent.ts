@@ -239,10 +239,7 @@ export function agentToSessionAccount(
     refreshJwt: agent.session.refreshJwt,
     accessJwt: agent.session.accessJwt,
     signupQueued: isSignupQueued(agent.session.accessJwt),
-    /**
-     * @see https://github.com/bluesky-social/atproto/blob/60b32e5c5182b20fe683112f134c73f0e79e17de/packages/api/src/agent.ts#L188
-     */
-    active: agent.session.active ?? true,
+    active: agent.session.active,
     status: agent.session.status as SessionAccount['status'],
     pdsUrl: agent.pdsUrl?.toString(),
   }
