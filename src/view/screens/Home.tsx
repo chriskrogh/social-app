@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useLayoutEffect} from 'react'
 import {ActivityIndicator, AppState, StyleSheet, View} from 'react-native'
 import {useFocusEffect} from '@react-navigation/native'
 
@@ -29,11 +29,34 @@ import {FollowingEndOfFeed} from 'view/com/posts/FollowingEndOfFeed'
 import {NoFeedsPinned} from '#/screens/Home/NoFeedsPinned'
 import {HomeHeader} from '../com/home/HomeHeader'
 
+const PAGE_JS_TIME = window?.performance?.now()
+
 type Props = NativeStackScreenProps<HomeTabNavigatorParams, 'Home'>
 export function HomeScreen(props: Props) {
-  const {data: preferences} = usePreferencesQuery()
-  const {data: pinnedFeedInfos, isLoading: isPinnedFeedsLoading} =
-    usePinnedFeedsInfos()
+  const {data: preferences, dataUpdatedAt: preferencesDataUpdatedAt} =
+    usePreferencesQuery()
+  const {
+    data: pinnedFeedInfos,
+    isLoading: isPinnedFeedsLoading,
+    dataUpdatedAt: pinnedFeedInfosDataUpdatedAt,
+  } = usePinnedFeedsInfos()
+
+  useLayoutEffect(() => {
+    if (PAGE_JS_TIME) {
+      console.log('RENDER_AND_MOUNT', window.performance.now() - PAGE_JS_TIME)
+    }
+  }, [])
+
+  useLayoutEffect(() => {
+    if (preferencesDataUpdatedAt && pinnedFeedInfosDataUpdatedAt) {
+      const dataUpdatedAt = Math.max(
+        preferencesDataUpdatedAt,
+        pinnedFeedInfosDataUpdatedAt,
+      )
+      console.log('RENDER_WITH_DATA', Date.now() - dataUpdatedAt)
+    }
+  }, [pinnedFeedInfosDataUpdatedAt, preferencesDataUpdatedAt])
+
   if (preferences && pinnedFeedInfos && !isPinnedFeedsLoading) {
     return (
       <HomeScreenReady
